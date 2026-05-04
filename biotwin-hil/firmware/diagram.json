@@ -1,11 +1,13 @@
 {
   "version": 1,
-  "author": "Spectra-biomed",
+  "author": "BioTwin-HIL",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} }
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0 },
+    { "type": "wokwi-analog-signal-generator", "id": "sig", "top": -100, "left": 100 }
   ],
   "connections": [
-    [ "esp:TX", "gateway:RX", "green", [] ]
+    [ "sig:OUT", "uno:A0", "cyan", [ "v0" ] ],
+    [ "sig:GND", "uno:GND", "black", [ "v0" ] ]
   ]
 }
