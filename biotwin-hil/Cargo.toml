@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/core-runner",
-    "crates/bio-validator"
+    "crates/bio-validator",
+    "crates/wokwi-bridge"
 ]
 resolver = "2"

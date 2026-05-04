@@ -1,5 +1,5 @@
 [package]
-name = "bio-validator"
+name = "wokwi-bridge"
 version = "0.1.0"
 edition = "2021"
 
