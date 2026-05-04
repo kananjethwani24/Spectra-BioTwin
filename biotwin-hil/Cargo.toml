@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "crates/core-runner",
+    "crates/bio-validator"
+]
+resolver = "2"
