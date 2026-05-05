@@ -10,12 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../ai-layer'))
 from persona_gen import generate_persona # type: ignore
-import httpx # for streaming to gateway
+import httpx
 import asyncio
 
-app = FastAPI(title="BioTwin-HIL P2", version="1.0.0")
+app = FastAPI(title="BioTwin-HIL P4", version="2.0.0")
 
-# Enable CORS for all origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,15 +24,15 @@ app.add_middleware(
 )
 
 class PersonaConfig(BaseModel):
-    persona_id: uuid.UUID | str
-    hr_bpm: int = Field(..., ge=0)
+    persona_id: Optional[str] = None
+    hr_bpm: int = 80
     arrhythmia_type: Optional[str] = None
-    noise_level: float = Field(..., ge=0.0)
-    age: int = Field(..., ge=0)
-    sex: str
-    conditions: List[str]
-    hr_min: int = Field(..., ge=0)
-    hr_max: int = Field(..., ge=0)
+    noise_level: float = 0.05
+    age: int = 45
+    sex: str = "M"
+    conditions: List[str] = []
+    hr_min: int = 60
+    hr_max: int = 100
 
 class SynthesizeRequest(BaseModel):
     signal_type: str
@@ -46,7 +45,6 @@ class ConnectionManager:
         self.active_connections: List[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):
-        # Accepting all origins to prevent 403
         await websocket.accept()
         self.active_connections.append(websocket)
 
@@ -68,10 +66,37 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Keep connection alive
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+def generate_cardiac_suite(hr_bpm, fs, duration):
+    t = np.linspace(0, duration, int(fs * duration))
+    hr_hz = hr_bpm / 60.0
+    
+    # ECG: P-QRS-T complex simulation
+    ecg = np.zeros_like(t)
+    for i in range(int(duration * hr_hz)):
+        t_start = i / hr_hz
+        idx = (t >= t_start) & (t < t_start + 0.6)
+        tt = t[idx] - t_start
+        ecg[idx] = 1.2 * np.exp(-((tt - 0.2)**2) / 0.001) - 0.2 * np.exp(-((tt - 0.4)**2) / 0.01) # QRS + T
+        
+    # PPG: Smooth pulse wave (Oxygenation)
+    ppg = 0.5 * np.sin(2 * np.pi * hr_hz * t - 0.2) + 0.5
+    ppg += 0.05 * np.random.randn(len(t))
+    
+    # BCG: Micro-vibration (Ballistocardiography)
+    bcg = 0.1 * np.sin(10 * 2 * np.pi * hr_hz * t) * np.exp(-((t % (1/hr_hz)) / 0.1))
+    
+    # PCG: Heart Sounds (Phonocardiography)
+    pcg = np.zeros_like(t)
+    for i in range(int(duration * hr_hz)):
+        t_start = i / hr_hz
+        pcg[(t >= t_start + 0.05) & (t < t_start + 0.15)] = 0.5 * np.sin(2 * np.pi * 100 * t[(t >= t_start + 0.05) & (t < t_start + 0.15)]) # S1
+        pcg[(t >= t_start + 0.35) & (t < t_start + 0.45)] = 0.3 * np.sin(2 * np.pi * 150 * t[(t >= t_start + 0.35) & (t < t_start + 0.45)]) # S2
+
+    return ecg, ppg, bcg, pcg
 
 @app.post("/api/v1/personas/generate")
 async def api_generate_persona(condition: str = "Normal", complexity: int = 3):
@@ -83,37 +108,24 @@ async def api_generate_persona(condition: str = "Normal", complexity: int = 3):
 
 @app.post("/api/v1/synthesize")
 async def api_synthesize(request: SynthesizeRequest):
-    # Mock signal generation for the hackathon
-    duration = request.duration_s
+    hr = request.persona_params.hr_bpm
     fs = request.sample_rate
-    t = np.linspace(0, duration, int(fs * duration))
+    dur = request.duration_s
     
-    # Generate a pulse-like signal
-    hr_hz = request.persona_params.hr_bpm / 60.0
-    signal = 0.5 * np.sin(2 * np.pi * hr_hz * t) + 0.2 * np.random.randn(len(t))
+    ecg, ppg, bcg, pcg = generate_cardiac_suite(hr, fs, dur)
     
-    # Broadcast to dashboard
+    # Broadcast all 4 signals
     await manager.broadcast({
         "type": "SIGNAL_DATA",
-        "signal_type": request.signal_type,
-        "data": signal.tolist()[:100] # Send first chunk for visualization
+        "signals": {
+            "ECG": ecg.tolist()[:100],
+            "PPG": ppg.tolist()[:100],
+            "BCG": bcg.tolist()[:100],
+            "PCG": pcg.tolist()[:100]
+        }
     })
     
-    # --- HIL Bridge ---
-    async def stream_to_wokwi():
-        try:
-            async with httpx.AsyncClient() as client:
-                for val in signal:
-                    voltage = (val + 1.0) * 2.5
-                    # Note: This requires wokwi-gateway running
-                    # await client.post("http://localhost:9011/pin/34", json={"voltage": voltage})
-                    await asyncio.sleep(0.02)
-        except:
-            pass
-
-    asyncio.create_task(stream_to_wokwi())
-    
-    return Response(content=signal.astype('<f8').tobytes(), media_type="application/octet-stream")
+    return {"status": "streaming"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
