@@ -11,24 +11,19 @@ export default function HolographicHeart({ bpm = 80 }: { bpm?: number }) {
         
         {/* The "3D" Heart Model (SVG with depth gradients) */}
         <div className={`relative w-full h-full animate-[heartbeat_${beatDuration}s_ease-in-out_infinite] transition-all duration-500`}>
-          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-[0_0_40px_rgba(239,68,68,0.3)]">
+          <svg viewBox="0 0 200 200" className="w-full h-full">
             <defs>
               <radialGradient id="heartGrad" cx="30%" cy="30%" r="70%">
                 <stop offset="0%" stopColor="#ef4444" />
                 <stop offset="50%" stopColor="#991b1b" />
                 <stop offset="100%" stopColor="#450a0a" />
               </radialGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
             </defs>
             
             {/* Heart Chambers (3D stylized) */}
             <path 
               d="M100 170 C 60 140, 20 100, 20 60 A 40 40 0 0 1 100 40 A 40 40 0 0 1 180 60 C 180 100, 140 140, 100 170 Z" 
               fill="url(#heartGrad)" 
-              filter="url(#glow)"
               className="opacity-90"
             />
             
