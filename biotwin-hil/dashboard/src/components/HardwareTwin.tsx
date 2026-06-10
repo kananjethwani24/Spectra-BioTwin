@@ -1,7 +1,24 @@
 "use client";
 import React from "react";
+import { useSensor } from "@/context/SensorContext";
 
 export default function HardwareTwin() {
+  const { sensorData } = useSensor();
+  const stress = sensorData.stress;
+
+  const stressColor = stress <= 30 ? "#10b981" : stress <= 70 ? "#fbbf24" : "#ef4444";
+  const stressLabel = stress <= 30 ? "STABLE" : stress <= 70 ? "ELEVATED" : "CRITICAL";
+  const stressBg = stress <= 30
+    ? "rgba(16,185,129,0.08)"
+    : stress <= 70
+    ? "rgba(251,191,36,0.08)"
+    : "rgba(239,68,68,0.08)";
+  const stressBorder = stress <= 30
+    ? "rgba(16,185,129,0.35)"
+    : stress <= 70
+    ? "rgba(251,191,36,0.35)"
+    : "rgba(239,68,68,0.35)";
+
   const SENSORS = [
     { id: "ECG", pin: "A0", color: "#22d3ee", label: "A0" },
     { id: "PPG", pin: "A1", color: "#10b981", label: "A1" },
@@ -11,11 +28,54 @@ export default function HardwareTwin() {
 
   return (
     <div className="glass-card p-6 border-t-2 border-slate-500/50 bg-[#0a0c10] h-full flex flex-col relative overflow-hidden">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">WOKWI VIRTUAL HIL REPLICA</h3>
         <div className="flex gap-1">
           <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        </div>
+      </div>
+
+      {/* Live Stress Widget — replaces spectral banner */}
+      <div
+        className="mb-4 rounded-xl px-4 py-3 flex items-center justify-between gap-4 transition-all duration-500"
+        style={{
+          background: stressBg,
+          border: `1px solid ${stressBorder}`,
+        }}
+      >
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[8px] font-black uppercase tracking-[0.25em] text-white/30">
+            Potentiometer · Stress Level
+          </span>
+          <div className="flex items-baseline gap-1">
+            <span
+              className="text-2xl font-black font-mono transition-all duration-300"
+              style={{ color: stressColor }}
+            >
+              {stress}
+            </span>
+            <span className="text-xs font-bold" style={{ color: stressColor }}>%</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-1.5 flex-1">
+          <span
+            className="text-[9px] font-black uppercase tracking-widest transition-colors duration-300"
+            style={{ color: stressColor }}
+          >
+            {stressLabel}
+          </span>
+          {/* Gauge bar */}
+          <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${stress}%`,
+                background: stressColor,
+                boxShadow: `0 0 8px ${stressColor}`,
+              }}
+            />
+          </div>
         </div>
       </div>
       
@@ -61,7 +121,7 @@ export default function HardwareTwin() {
 
         {/* ARDUINO UNO (Exact Pose) */}
         <div className="mt-16 relative w-64 h-44 z-20">
-           <svg viewBox="0 0 250 170" className="w-full h-full drop-shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+           <svg viewBox="0 0 250 170" className="w-full h-full">
               {/* Board Body */}
               <rect x="0" y="0" width="250" height="170" rx="4" fill="#00979d" />
               <rect x="5" y="50" width="35" height="45" fill="#c0c0c0" rx="1" /> {/* USB */}

@@ -42,7 +42,7 @@ The firmware's beat detection algorithm uses a fixed threshold of 0.7 mV for R-p
         setIsStreaming(false);
         clearInterval(interval);
       }
-    }, 12);
+    }, 50);
     return () => clearInterval(interval);
   }, [reportId]);
 

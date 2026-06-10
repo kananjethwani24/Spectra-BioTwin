@@ -84,8 +84,8 @@ export default function WaveformChart({ packets }: { packets: SimPacket[] }) {
       {
         label: "ECG Signal (mV)",
         data: dataPoints,
-        borderColor: "#22d3ee",
-        backgroundColor: "rgba(34, 211, 238, 0.05)",
+        borderColor: "var(--accent-cyan)",
+        backgroundColor: "rgba(2, 132, 199, 0.04)",
         borderWidth: 1.5,
         pointRadius: 0,
         tension: 0.2,
@@ -101,11 +101,11 @@ export default function WaveformChart({ packets }: { packets: SimPacket[] }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: "rgba(17,24,39,0.95)",
-        borderColor: "rgba(56,189,248,0.2)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "rgba(244, 180, 196, 0.4)",
         borderWidth: 1,
-        titleColor: "#f1f5f9",
-        bodyColor: "#94a3b8",
+        titleColor: "var(--text-primary)",
+        bodyColor: "var(--text-secondary)",
         padding: 12,
         cornerRadius: 8,
       },
@@ -116,7 +116,7 @@ export default function WaveformChart({ packets }: { packets: SimPacket[] }) {
       },
       y: {
         grid: {
-          color: "rgba(255,255,255,0.03)",
+          color: "rgba(0, 0, 0, 0.04)",
           drawBorder: false,
         },
         ticks: {

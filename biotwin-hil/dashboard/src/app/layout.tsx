@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Lexend } from "next/font/google";
 import "./globals.css";
+import { SensorProvider } from "@/context/SensorContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,6 +11,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {/* Background glow orbs */}
@@ -37,7 +44,7 @@ export default function RootLayout({
             height: 400,
             top: "10%",
             left: "5%",
-            background: "rgba(6,182,212,0.08)",
+            background: "rgba(236, 72, 153, 0.08)",
           }}
         />
         <div
@@ -47,10 +54,12 @@ export default function RootLayout({
             height: 350,
             bottom: "20%",
             right: "10%",
-            background: "rgba(139,92,246,0.06)",
+            background: "rgba(14, 165, 233, 0.08)",
           }}
         />
-        {children}
+        <SensorProvider>
+          {children}
+        </SensorProvider>
       </body>
     </html>
   );
