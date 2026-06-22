@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+numpy
+google-generativeai
+openai
+anthropic
+pyserial
+requests

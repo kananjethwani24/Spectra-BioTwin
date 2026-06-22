@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "author": "BioTwin HIL",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0 },
+    { "type": "wokwi-potentiometer", "id": "sens_ecg", "top": -100, "left": -150, "attrs": { "label": "ECG_PROBE" } },
+    { "type": "wokwi-potentiometer", "id": "sens_ppg", "top": -100, "left": -50, "attrs": { "label": "PPG_PROBE" } },
+    { "type": "wokwi-potentiometer", "id": "sens_bcg", "top": -100, "left": 50, "attrs": { "label": "BCG_PROBE" } },
+    { "type": "wokwi-potentiometer", "id": "sens_pcg", "top": -100, "left": 150, "attrs": { "label": "PCG_PROBE" } }
+  ],
+  "connections": [
+    [ "uno:A0", "sens_ecg:SIG", "cyan", [ "v0" ] ],
+    [ "uno:A1", "sens_ppg:SIG", "green", [ "v0" ] ],
+    [ "uno:A2", "sens_bcg:SIG", "orange", [ "v0" ] ],
+    [ "uno:A3", "sens_pcg:SIG", "purple", [ "v0" ] ],
+    [ "uno:GND.1", "sens_ecg:GND", "black", [ "v0" ] ],
+    [ "uno:5V", "sens_ecg:VCC", "red", [ "v0" ] ]
+  ]
+}
