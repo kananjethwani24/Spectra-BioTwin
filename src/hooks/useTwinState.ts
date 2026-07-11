@@ -55,6 +55,13 @@ export type TwinState = {
   // Raw optical sensor values
   ir: number;
   red: number;
+  // MPU6050 motion sensor
+  accel_x: number;
+  accel_y: number;
+  accel_z: number;
+  gyro_x: number;
+  gyro_y: number;
+  gyro_z: number;
 };
 
 export type PersonaPayload = {
@@ -80,6 +87,13 @@ export type RawSensorData = {
   ir?: number;
   red?: number;
   stress?: number;
+  // MPU6050
+  accel_x?: number;
+  accel_y?: number;
+  accel_z?: number;
+  gyro_x?: number;
+  gyro_y?: number;
+  gyro_z?: number;
   // Mapped fields (from Python bridge or direct)
   heart_rate: number;
   spo2: number;
@@ -555,6 +569,8 @@ function defaultTwinState(): TwinState {
     spectralChannels: [],
     ir: 0,
     red: 0,
+    accel_x: 0, accel_y: 0, accel_z: 0,
+    gyro_x: 0, gyro_y: 0, gyro_z: 0,
   };
 }
 
@@ -713,6 +729,8 @@ export function useTwinState(wsUrl: string) {
       spectralChannels: [],
       ir: 0,
       red: 0,
+      accel_x: 0, accel_y: 0, accel_z: 0,
+      gyro_x: 0, gyro_y: 0, gyro_z: 0,
     });
 
     setIsPersonaApplied(true);
@@ -765,10 +783,18 @@ export function useTwinState(wsUrl: string) {
         condition: liveCondition,
         arrhythmia: CONDITION_VITALS[liveCondition].arrhythmia,
         ...scores,
+        // Use backend health_score if provided, otherwise use computed score
+        healthScore: typeof data.health_score === "number" ? data.health_score : scores.healthScore,
         conditionProbabilities: probs,
         sensorMode: sensorModeRef.current,
         ir: rawIR,
         red: rawRed,
+        accel_x: data.accel_x ?? prev.accel_x,
+        accel_y: data.accel_y ?? prev.accel_y,
+        accel_z: data.accel_z ?? prev.accel_z,
+        gyro_x: data.gyro_x ?? prev.gyro_x,
+        gyro_y: data.gyro_y ?? prev.gyro_y,
+        gyro_z: data.gyro_z ?? prev.gyro_z,
       };
     });
   }, []);

@@ -110,6 +110,12 @@ class SensorPayload(BaseModel):
     red: Optional[int] = None
     spectral_status: Optional[str] = "disabled"
     spectral_channels: Optional[List[int]] = None
+    accel_x: Optional[float] = None
+    accel_y: Optional[float] = None
+    accel_z: Optional[float] = None
+    gyro_x: Optional[float] = None
+    gyro_y: Optional[float] = None
+    gyro_z: Optional[float] = None
 
 class ConnectionManager:
     def __init__(self):
@@ -251,7 +257,13 @@ async def ingest_sensor_data(payload: SensorPayload):
         "red": payload.red,
         "spectral_status": payload.spectral_status or "disabled",
         "spectral_channels": payload.spectral_channels or [],
-        "health_score": health_score
+        "health_score": health_score,
+        "accel_x": payload.accel_x or 0.0,
+        "accel_y": payload.accel_y or 0.0,
+        "accel_z": payload.accel_z or 0.0,
+        "gyro_x": payload.gyro_x or 0.0,
+        "gyro_y": payload.gyro_y or 0.0,
+        "gyro_z": payload.gyro_z or 0.0,
     }
     
     # Broadcast updated sensor data via WebSocket
@@ -357,7 +369,7 @@ def serial_reader():
                         continue
                     try:
                         data = json.loads(line)
-                        print(f"[SERIAL] Parsed: HR={data.get('heart_rate',0)} IR={data.get('ir',0)}")
+                        print(f"[SERIAL] Parsed: HR={data.get('heart_rate',0)} SpO2={data.get('spo2',0)}% IR={data.get('ir',0)} RED={data.get('red',0)} Temp={data.get('temperature',0)}°C Hum={data.get('humidity',0)}% Press={data.get('pressure',0)}hPa Stress={data.get('stress',0)}% AX={data.get('accel_x',0)} AY={data.get('accel_y',0)} AZ={data.get('accel_z',0)} GX={data.get('gyro_x',0)} GY={data.get('gyro_y',0)} GZ={data.get('gyro_z',0)}")
                         # Map ESP32 keys to API payload keys
                         payload = {
                             "heart_rate": int(data.get("hr", data.get("heart_rate", 0))),
@@ -368,6 +380,12 @@ def serial_reader():
                             "stress":     int(data.get("stress", 0)),
                             "ir":         int(data.get("ir", 0)) if data.get("ir") else None,
                             "red":        int(data.get("red", 0)) if data.get("red") else None,
+                            "accel_x":    float(data["accel_x"]) if "accel_x" in data else None,
+                            "accel_y":    float(data["accel_y"]) if "accel_y" in data else None,
+                            "accel_z":    float(data["accel_z"]) if "accel_z" in data else None,
+                            "gyro_x":     float(data["gyro_x"]) if "gyro_x" in data else None,
+                            "gyro_y":     float(data["gyro_y"]) if "gyro_y" in data else None,
+                            "gyro_z":     float(data["gyro_z"]) if "gyro_z" in data else None,
                         }
                         import requests
                         requests.post("http://localhost:8000/api/v1/ingest", json=payload, timeout=1)

@@ -1,14 +1,13 @@
 
-Step 1: Terminal 1: cd "C:\Users\laava\Desktop\BioTwin\biotwin-hil"
+Step 1: Terminal 1: cd "C:\Users\kanan\Desktop\IoT EL FINAL\biotwin09"
                     docker-compose up -d
 
 Step 2: Terminal 2: & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" device monitor --port COM3 --baud 115200
 
-Step 3: Terminal 3: cd "C:\Users\laava\Desktop\BioTwin\biotwin-hil"
+Step 3: Terminal 3: cd "C:\Users\kanan\Desktop\IoT EL FINAL\biotwin09"
                     py python/bio-synths/src/main.py
 
-Step 4: Terminal 4: cd "C:\Users\laava\Desktop\BioTwin\biotwin-hil"
-                    cd dashboard 
+Step 4: Terminal 4: cd "C:\Users\kanan\Desktop\IoT EL FINAL\biotwin09"
                     npm run dev
 
 ─────────────────────────────────────────────────

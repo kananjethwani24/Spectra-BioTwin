@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Lexend, Inter } from "next/font/google";
 import "./globals.css";
 import { SensorProvider } from "@/context/SensorContext";
+import FallDetector from "@/components/FallDetector";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,6 +65,7 @@ export default function RootLayout({
           }}
         />
         <SensorProvider>
+          <FallDetector />
           {children}
         </SensorProvider>
       </body>

@@ -52,6 +52,21 @@ export default function HardwareDebugPanel() {
         <DebugStat label="Potentiometer" value={`${sensorData.stress}`} unit="%" color="#34d399" />
       </div>
 
+      {/* MPU6050 Motion Data */}
+      <div>
+        <h4 className="text-[8px] font-black text-slate-500 uppercase tracking-wider mb-2">
+          MPU6050 — Accelerometer &amp; Gyroscope
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+          <DebugStat label="Accel X" value={sensorData.accel_x.toFixed(2)} unit="m/s²" color="#38bdf8" />
+          <DebugStat label="Accel Y" value={sensorData.accel_y.toFixed(2)} unit="m/s²" color="#38bdf8" />
+          <DebugStat label="Accel Z" value={sensorData.accel_z.toFixed(2)} unit="m/s²" color="#38bdf8" />
+          <DebugStat label="Gyro X" value={sensorData.gyro_x.toFixed(2)} unit="rad/s" color="#818cf8" />
+          <DebugStat label="Gyro Y" value={sensorData.gyro_y.toFixed(2)} unit="rad/s" color="#818cf8" />
+          <DebugStat label="Gyro Z" value={sensorData.gyro_z.toFixed(2)} unit="rad/s" color="#818cf8" />
+        </div>
+      </div>
+
       {/* Terminal logs for incoming packets */}
       <div>
         <h4 className="text-[8px] font-black text-slate-500 uppercase tracking-wider mb-2">

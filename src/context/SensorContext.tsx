@@ -8,6 +8,12 @@ export interface SensorData {
   humidity: number;
   pressure: number;
   stress: number;
+  accel_x: number;
+  accel_y: number;
+  accel_z: number;
+  gyro_x: number;
+  gyro_y: number;
+  gyro_z: number;
 }
 
 export interface StressHistoryPoint {
@@ -46,6 +52,12 @@ export function SensorProvider({ children }: { children: React.ReactNode }) {
     humidity: 40,
     pressure: 1013.25,
     stress: 0,
+    accel_x: 0,
+    accel_y: 0,
+    accel_z: 0,
+    gyro_x: 0,
+    gyro_y: 0,
+    gyro_z: 0,
   });
   const [connected, setConnected] = useState(false);
   const [stressHistory, setStressHistory] = useState<StressHistoryPoint[]>(generateBaselineHistory);
@@ -75,6 +87,12 @@ export function SensorProvider({ children }: { children: React.ReactNode }) {
               humidity: typeof raw.humidity === "number" ? raw.humidity : 40,
               pressure: typeof raw.pressure === "number" ? raw.pressure : 1013.25,
               stress: typeof raw.stress === "number" ? raw.stress : 0,
+              accel_x: typeof raw.accel_x === "number" ? raw.accel_x : 0,
+              accel_y: typeof raw.accel_y === "number" ? raw.accel_y : 0,
+              accel_z: typeof raw.accel_z === "number" ? raw.accel_z : 0,
+              gyro_x: typeof raw.gyro_x === "number" ? raw.gyro_x : 0,
+              gyro_y: typeof raw.gyro_y === "number" ? raw.gyro_y : 0,
+              gyro_z: typeof raw.gyro_z === "number" ? raw.gyro_z : 0,
             };
 
             setSensorData(newData);

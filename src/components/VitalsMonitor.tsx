@@ -69,6 +69,47 @@ function StressCard() {
   );
 }
 
+function MotionCard({ twinState }: { twinState: TwinState }) {
+  const { accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z } = twinState;
+  const magnitude = Math.sqrt(accel_x ** 2 + accel_y ** 2 + accel_z ** 2);
+  const activity = magnitude < 10.5 ? "Still" : magnitude < 15 ? "Moving" : "Active";
+  const actColor = magnitude < 10.5 ? "#10b981" : magnitude < 15 ? "#f59e0b" : "#ef4444";
+
+  return (
+    <div className="glass-card p-5 border-t-2 border-indigo-300/60 bg-indigo-50/5">
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">MPU6050 — MOTION SENSOR</h4>
+          <p className="text-[8px] text-text-muted uppercase tracking-widest mt-1">Accelerometer &amp; Gyroscope</p>
+        </div>
+        <div className="px-2.5 py-1 rounded text-[8px] font-black uppercase border"
+          style={{ background: `${actColor}18`, borderColor: `${actColor}44`, color: actColor }}>
+          {activity}
+        </div>
+      </div>
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+        <MiniStat label="Accel X" value={accel_x.toFixed(2)} unit="m/s²" color="#38bdf8" />
+        <MiniStat label="Accel Y" value={accel_y.toFixed(2)} unit="m/s²" color="#38bdf8" />
+        <MiniStat label="Accel Z" value={accel_z.toFixed(2)} unit="m/s²" color="#38bdf8" />
+        <MiniStat label="Gyro X" value={gyro_x.toFixed(2)} unit="rad/s" color="#818cf8" />
+        <MiniStat label="Gyro Y" value={gyro_y.toFixed(2)} unit="rad/s" color="#818cf8" />
+        <MiniStat label="Gyro Z" value={gyro_z.toFixed(2)} unit="rad/s" color="#818cf8" />
+      </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value, unit, color }: { label: string; value: string; unit: string; color: string }) {
+  return (
+    <div className="p-3 bg-black/5 rounded-xl flex flex-col gap-1">
+      <span className="text-[8px] text-text-muted uppercase tracking-wider font-bold">{label}</span>
+      <span className="text-sm font-black font-mono" style={{ color }}>
+        {value}<span className="text-[8px] text-text-muted font-normal ml-1">{unit}</span>
+      </span>
+    </div>
+  );
+}
+
 export default function VitalsMonitor({ twinState, sensorMode }: Props) {
   const {
     heartRate,
@@ -258,6 +299,9 @@ return (
         {/* Live Stress Card */}
         <StressCard />
       </div>
+
+      {/* MPU6050 Motion Data */}
+      <MotionCard twinState={twinState} />
 
 
 

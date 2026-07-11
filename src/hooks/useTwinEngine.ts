@@ -49,6 +49,8 @@ export function deriveTwinState(sensor: {
     conditionProbabilities: classifyCondition(hr, spo2, temp),
     sensorMode: "SIMULATION_MODE", spectralStatus: "disabled", spectralChannels: [],
     ir: 0, red: 0,
+    accel_x: 0, accel_y: 0, accel_z: 0,
+    gyro_x: 0, gyro_y: 0, gyro_z: 0,
   };
 }
 
